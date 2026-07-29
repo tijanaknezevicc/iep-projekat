@@ -42,14 +42,10 @@ with application.app_context():
 @application.route( "/register", methods=["POST"])
 def register():
        
-    if (not "forename" in request.json or len (request.json["forename"]) == 0 or len(request.json["forename"]) > 256):
-        return jsonify({"message": "Field forename is missing."}), 400
-    if (not "surname" in request.json or len (request.json["surname"]) == 0 or len(request.json["surname"]) > 256):
-        return jsonify({"message": "Field surname is missing."}), 400
-    if (not "email" in request.json or len (request.json["email"]) == 0 or len(request.json["email"] ) > 256):
-        return jsonify({"message": "Field email is missing."}), 400
-    if (not "password" in request.json or len (request.json["password"] ) == 0 or len(request.json["password"]) > 256):
-        return jsonify({"message": "Field password is missing."}), 400
+    required_fields = ["forename", "surname", "email", "password"]
+    for field in required_fields:
+        if field not in request.json or len(request.json[field]) == 0 or len(request.json[field]) > 256:
+            return jsonify({"message": f"Field {field} is missing."}), 400
 
     if (not re.fullmatch(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$', request.json["email"])):
         return jsonify({"message": "Invalid email."}), 400
@@ -79,10 +75,10 @@ jwt = JWTManager (application)
 @application.route ("/login", methods = ["POST"])
 def login ( ):
 
-    if (not "email" in request.json or len(request.json["email"]) == 0 or len(request.json["email"]) > 256):
-        return jsonify({"message": "Field email is missing."}), 400
-    if (not "password" in request.json or len (request.json["password"]) == 0 or len (request.json["password"]) > 256):
-        return jsonify({"message": "Field password is missing."}), 400
+    required_fields = ["email", "password"]
+    for field in required_fields:
+        if field not in request.json or len(request.json[field]) == 0 or len(request.json[field]) > 256:
+            return jsonify({"message": f"Field {field} is missing."}), 400
 
     if (not re.fullmatch(r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$', request.json["email"])):
         return jsonify({"message": "Invalid email."}), 400
@@ -100,7 +96,7 @@ def login ( ):
 
     access_token = create_access_token(identity = user.email, additional_claims = claims)
 
-    return jsonify ({"accessToken": access_token}), 200
+    return jsonify({"accessToken": access_token}), 200
 
 @application.route ("/delete", methods = ["POST"])
 @jwt_required() # ovo vraca "Missing Authorization Header", 401 ne moram ja
