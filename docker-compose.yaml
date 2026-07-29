@@ -1,0 +1,55 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+
+  authentication:
+    build:
+      context: ./authentication
+    ports:
+      - "5000:5000"
+    environment:
+      JWT_SECRET_KEY: super-secret-key-change-in-production
+      SQLALCHEMY_DATABASE_URI: sqlite:///database.db
+    volumes:
+      - auth-data:/instance
+
+  employee:
+    build:
+      context: ./fund
+      dockerfile: employee.dockerfile
+    ports:
+      - "5001:5001"
+    environment:
+      MONGO_HOST: mongo
+      REDIS_HOST: redis
+      JWT_SECRET_KEY: super-secret-key-change-in-production
+    depends_on:
+      - mongo
+      - redis
+
+  director:
+    build:
+      context: ./fund
+      dockerfile: director.dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      MONGO_HOST: mongo
+      REDIS_HOST: redis
+      JWT_SECRET_KEY: super-secret-key-change-in-production
+    depends_on:
+      - mongo
+      - redis
+
+volumes:
+  auth-data:

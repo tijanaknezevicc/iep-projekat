@@ -22,7 +22,6 @@ application.config.from_object(Configuration)
 database.init_app(application)
 
 with application.app_context():
-    # database.drop_all()
     database.create_all()
 
     director = User.query.filter(User.email == "onlymoney@gmail.com" ).first()

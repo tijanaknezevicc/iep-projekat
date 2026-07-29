@@ -1,3 +1,21 @@
+docker compose up -d --build
+
+docker compose down
+docker compose down -v
+
+docker compose restart
+
+////////////////////////////////////
+
 cd fund
 docker compose -f docker-compose.yml up -d
 
+
+cd authentication
+docker build -t iep-authentication .
+
+cd fund
+docker build -f employee.dockerfile -t iep-employee .
+docker build -f director.dockerfile -t iep-director .
+
+docker compose up -d --build
