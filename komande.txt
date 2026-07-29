@@ -5,7 +5,37 @@ docker compose down -v
 
 docker compose restart
 
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/secret.yaml
+kubectl apply -f k8s/mongo-pvc.yaml
+kubectl apply -f k8s/mongo.yaml
+kubectl apply -f k8s/redis-pvc.yaml
+kubectl apply -f k8s/redis.yaml
+
+
+docker save iep-authentication -o iep-authentication.tar
+docker save iep-employee -o iep-employee.tar
+docker save iep-director -o iep-director.tar
+
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-authentication.tar"
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-employee.tar"
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-director.tar"
+
+kubectl apply -f k8s/auth-pvc.yaml
+kubectl apply -f k8s/authentication.yaml
+kubectl apply -f k8s/employee.yaml
+kubectl apply -f k8s/director.yaml
+
+
+kubectl get pods
+
+
+kubectl exec -it deployment/redis -- redis-cli FLUSHALL
+kubectl exec -it deployment/mongo -- mongosh -u root -p example --authenticationDatabase admin --eval "db.getSiblingDB('fund').assets.deleteMany({})"
+
 ////////////////////////////////////
+
+winget install Kubernetes.kind
 
 cd fund
 docker compose -f docker-compose.yml up -d

@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: director
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: director
+  template:
+    metadata:
+      labels:
+        app: director
+    spec:
+      containers:
+        - name: director
+          image: iep-director
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5002
+          env:
+            - name: MONGO_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: MONGO_HOST
+            - name: MONGO_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: MONGO_PORT
+            - name: MONGO_DB_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: MONGO_DB_NAME
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: REDIS_PORT
+            - name: MONGO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: fund-secret
+                  key: MONGO_USERNAME
+            - name: MONGO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: fund-secret
+                  key: MONGO_PASSWORD
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: fund-secret
+                  key: JWT_SECRET_KEY
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: director
+spec:
+  selector:
+    app: director
+  ports:
+    - port: 5002
+      targetPort: 5002

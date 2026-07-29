@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+        - name: authentication
+          image: iep-authentication
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5000
+          env:
+            - name: JWT_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: fund-secret
+                  key: JWT_SECRET_KEY
+            - name: SQLALCHEMY_DATABASE_URI
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: SQLALCHEMY_DATABASE_URI
+          volumeMounts:
+            - name: auth-data
+              mountPath: /instance
+      volumes:
+        - name: auth-data
+          persistentVolumeClaim:
+            claimName: auth-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication
+spec:
+  selector:
+    app: authentication
+  ports:
+    - port: 5000
+      targetPort: 5000
