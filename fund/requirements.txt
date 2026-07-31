@@ -2,3 +2,5 @@ flask
 flask-jwt-extended
 pymongo
 redis
+web3
+py-solc-x

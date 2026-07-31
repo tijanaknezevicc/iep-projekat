@@ -5,6 +5,10 @@ docker compose down -v
 
 docker compose restart
 
+docker compose up -d ganache
+
+docker ps
+
 kubectl apply -f k8s/
 
 kubectl apply -f k8s/configmap.yaml
@@ -13,7 +17,6 @@ kubectl apply -f k8s/mongo-pvc.yaml
 kubectl apply -f k8s/mongo.yaml
 kubectl apply -f k8s/redis-pvc.yaml
 kubectl apply -f k8s/redis.yaml
-
 
 docker save iep-authentication -o iep-authentication.tar
 docker save iep-employee -o iep-employee.tar

@@ -11,3 +11,5 @@ MONGO_PASSWORD = os.environ.get("MONGO_PASSWORD", "example")
 
 REDIS_HOST = os.environ.get("REDIS_HOST", "localhost")
 REDIS_PORT = int(os.environ.get("REDIS_PORT", 6379))
+
+GANACHE_URL = os.environ.get("GANACHE_URL", "http://localhost:8545")
