@@ -9,3 +9,4 @@ data:
   REDIS_HOST: "redis"
   REDIS_PORT: "6379"
   SQLALCHEMY_DATABASE_URI: "sqlite:///database.db"
+  GANACHE_URL: "http://ganache:8545"

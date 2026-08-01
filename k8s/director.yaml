@@ -66,12 +66,18 @@ spec:
                 secretKeyRef:
                   name: fund-secret
                   key: JWT_SECRET_KEY
+            - name: GANACHE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: fund-config
+                  key: GANACHE_URL
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: director
 spec:
+  type: LoadBalancer
   selector:
     app: director
   ports:

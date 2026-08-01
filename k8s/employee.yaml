@@ -72,6 +72,7 @@ kind: Service
 metadata:
   name: employee
 spec:
+  type: LoadBalancer
   selector:
     app: employee
   ports:

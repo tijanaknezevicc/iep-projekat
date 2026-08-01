@@ -49,6 +49,7 @@ kind: Service
 metadata:
   name: authentication
 spec:
+  type: LoadBalancer
   selector:
     app: authentication
   ports:
