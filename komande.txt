@@ -38,6 +38,16 @@ with application.app_context():
 
 pytest -q --type all --authentication-url http://127.0.0.1:5000 --jwt-secret super-secret-key-change-in-production --roles-field role --employee-role employee --director-role director --with-authentication --employee-url http://127.0.0.1:5001 --director-url http://127.0.0.1:5002 --with-blockchain --provider-url http://127.0.0.1:8545 --grade-report-file grade_report.json
 
+----------------------------------------------------------------------------------------------------------
+
+docker compose build <servis>
+docker compose up -d <servis>
+
+docker save iep-<servis> -o iep-<servis>.tar
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-<servis>.tar"
+kubectl delete pod -l app=<servis>
+
+
 
 /////////////////////////////////
 
