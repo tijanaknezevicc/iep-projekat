@@ -146,17 +146,17 @@ def decision():
 
     deployed_contract = web3.eth.contract(address=receipt.contractAddress, abi=abi)
 
-    event_filter = deployed_contract.events.Finished.create_filter(fromBlock="latest")
+    event_filter = deployed_contract.events.Finished.create_filter(from_block="latest")
     active_filters[receipt.contractAddress] = (event_filter, data["uuid"])
 
     approve_transaction = {
         "to": receipt.contractAddress,
-        "data": deployed_contract.encodeABI(fn_name="approve"),
+        "data": deployed_contract.encode_abi(abi_element_identifier="approve"),
     }
 
     reject_transaction = {
         "to": receipt.contractAddress,
-        "data": deployed_contract.encodeABI(fn_name="reject"),
+        "data": deployed_contract.encode_abi(abi_element_identifier="reject"),
     }    
 
     return jsonify({
@@ -190,7 +190,6 @@ def report():
     statistics = list(assets.aggregate(pipeline))
 
     return jsonify({"statistics": statistics}), 200
-
 
 def voting_listener(stopped):
     while not stopped():

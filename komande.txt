@@ -38,6 +38,11 @@ kubectl get pods
 kubectl exec -it deployment/redis -- redis-cli FLUSHALL
 kubectl exec -it deployment/mongo -- mongosh -u root -p example --authenticationDatabase admin --eval "db.getSiblingDB('fund').assets.deleteMany({})"
 
+
+docker compose restart authentication
+docker exec -it projekat-redis-1 redis-cli FLUSHALL
+docker exec -it projekat-mongo-1 mongosh -u root -p example --authenticationDatabase admin --eval "db.getSiblingDB('fund').assets.deleteMany({})"
+
 ////////////////////////////////////
 
 winget install Kubernetes.kind
