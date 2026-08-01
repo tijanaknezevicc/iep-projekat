@@ -15,6 +15,7 @@ spec:
       containers:
         - name: ganache
           image: trufflesuite/ganache-cli
+          imagePullPolicy: IfNotPresent
           resources:
             requests:
               cpu: "200m"
