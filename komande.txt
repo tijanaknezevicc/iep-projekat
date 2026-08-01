@@ -48,6 +48,7 @@ cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep
 kubectl delete pod -l app=<servis>
 
 
+kubectl delete pod -l app=director
 
 /////////////////////////////////
 

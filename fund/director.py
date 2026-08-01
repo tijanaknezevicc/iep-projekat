@@ -15,17 +15,14 @@ from bson.errors import InvalidId
 
 from decorators import role_check
 
-import solcx
 from web3 import Web3
 
-with open("solidity/voting.sol", "r") as file:
-    source = file.read()
+def read_file(path):
+    with open(path, "r") as file:
+        return file.read()
 
-compiled = solcx.compile_source(source, output_values=["abi", "bin"], solc_version="0.8.18")
-
-interface = compiled["<stdin>:Voting"]
-abi = interface["abi"]
-bytecode = interface["bin"]
+abi = json.loads(read_file("solidity/output/Voting.abi"))
+bytecode = read_file("solidity/output/Voting.bin")
 
 web3 = Web3(Web3.HTTPProvider(GANACHE_URL))
 

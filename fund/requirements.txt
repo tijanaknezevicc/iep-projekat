@@ -3,4 +3,3 @@ flask-jwt-extended
 pymongo
 redis
 web3==7.16.0
-py-solc-x
