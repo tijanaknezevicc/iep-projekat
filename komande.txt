@@ -1,4 +1,47 @@
 docker compose up -d --build
+(docker ps)
+
+(kubectl get nodes)
+
+docker save iep-authentication -o iep-authentication.tar
+docker save iep-employee -o iep-employee.tar
+docker save iep-director -o iep-director.tar
+
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-authentication.tar"
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-employee.tar"
+cmd /c "docker exec -i desktop-control-plane ctr -n=k8s.io images import - < iep-director.tar"
+
+kubectl apply -f k8s/
+(kubectl get pods)
+(kubectl get svc)
+
+docker compose down
+(docker ps)
+
+kubectl exec -it deployment/redis -- redis-cli FLUSHALL
+kubectl exec -it deployment/mongo -- mongosh -u root -p example --authenticationDatabase admin --eval "db.getSiblingDB('fund').assets.deleteMany({})"
+kubectl exec -it deployment/authentication -- python -c "
+from main import application, database, User
+with application.app_context():
+    User.query.filter(User.role == 'employee').delete()
+    database.session.commit()
+"
+
+docker compose restart redis
+docker exec -it projekat-mongo-1 mongosh -u root -p example --authenticationDatabase admin --eval "db.getSiblingDB('fund').assets.deleteMany({})"
+docker exec -it projekat-authentication-1 python -c "
+from main import application, database, User
+with application.app_context():
+    User.query.filter(User.role == 'employee').delete()
+    database.session.commit()
+"
+
+pytest -q --type all --authentication-url http://127.0.0.1:5000 --jwt-secret super-secret-key-change-in-production --roles-field role --employee-role employee --director-role director --with-authentication --employee-url http://127.0.0.1:5001 --director-url http://127.0.0.1:5002 --with-blockchain --provider-url http://127.0.0.1:8545 --grade-report-file grade_report.json
+
+
+/////////////////////////////////
+
+docker compose up -d --build
 
 docker compose down
 docker compose down -v
