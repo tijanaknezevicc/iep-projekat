@@ -27,7 +27,8 @@ with application.app_context():
     database.session.commit()
 "
 
-docker compose restart redis
+(docker compose restart redis)
+docker exec -it projekat-redis-1 redis-cli FLUSHALL
 docker exec -it projekat-mongo-1 mongosh -u root -p example --authenticationDatabase admin --eval "db.getSiblingDB('fund').assets.deleteMany({})"
 docker exec -it projekat-authentication-1 python -c "
 from main import application, database, User
