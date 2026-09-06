@@ -52,6 +52,13 @@ kubectl delete pod -l app=director
 
 /////////////////////////////////
 
+docker exec -it projekat-mongo-1 mongosh -u root -p example --authenticationDatabase admin
+use fund
+(show collections)
+db.assets.find().pretty()
+
+/////////////////////////////////
+
 docker compose up -d --build
 
 docker compose down

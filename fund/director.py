@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 
 from flask_jwt_extended import JWTManager
 
-from bson import ObjectId
+from bson import ObjectId, json_util
 from bson.errors import InvalidId
 
 from decorators import role_check
@@ -187,6 +187,34 @@ def report():
     statistics = list(assets.aggregate(pipeline))
 
     return jsonify({"statistics": statistics}), 200
+
+@application.route("/most_profitable", methods=["GET"])
+def most_profitable():
+    pipeline = [
+        { "$match": {"selling_price": {"$exists": "true"}}},
+        { "$project": {"_id": 0,
+                       "id": {"$toString": "$_id"},
+                       "name": 1,
+                       "categories": 1,
+                       "buying_price": 1,
+                       "buying_date": 1,
+                       "info": 1,
+                       "selling_date": 1,
+                       "selling_price": 1,
+                       "profit": {"$subtract": ["$selling_price", "$buying_price"]}
+                       }
+        },
+        {
+            "$sort": {"profit": -1}
+        },
+        {
+            "$limit": 1
+        }
+    ]
+
+    result = list(assets.aggregate(pipeline))
+    
+    return jsonify({"most profitable": result}), 200
 
 def voting_listener(stopped):
     while not stopped():
